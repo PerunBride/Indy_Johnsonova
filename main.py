@@ -37,7 +37,7 @@ def main():
     context['inventory'] = [
         {
             'name': 'ucebnica',
-            'description': 'Uchvatna ucebnica o proto-majskej civilizacii.',
+            'description': 'Uchvatna ucebnica o olmeckejj civilizacii.',
             'features': [features.MOVABLE, features.USABLE]
         }
     ]
