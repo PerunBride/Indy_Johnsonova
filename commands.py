@@ -3,7 +3,7 @@ import random
 import features
 import states
 import usages
-from helper import find_item
+from helper import find_item, get_room_by_name
 
 
 def inventory(name: str, context: dict) -> None:
@@ -13,7 +13,6 @@ def inventory(name: str, context: dict) -> None:
         print('V batohu máš:')
         for item in context['inventory']:
             print(f'\t* {item["name"]}')
-
 
 
 def look_around(name: str, context: dict) -> None:
@@ -28,10 +27,18 @@ def look_around(name: str, context: dict) -> None:
         for item in room['items']:
             print(f'\t* {item["name"]}')
 
-
-
     # tuto vypisat vychody z miestnosti
     # alebo: Z miestnosti nevedú žiadne východy. v pripade, ze ziadne vychody nie su
+    translation = {
+        'north': 'sever',
+        'south': 'juh',
+        'east': 'vychod',
+        'west': 'zapad'
+    }
+    print('Východy z miestnosti:')
+    for ex in room['exits']:
+        if room['exits'][ex] is not None:
+            print(f'\t* {translation[ex]}')
 
 
 def drop(name: str, context: dict) -> None:
@@ -172,6 +179,78 @@ def show_commands(name: str, context: dict) -> None:
         print(f'\t* {command["name"]} - {command["description"]}')
 
 
+def west(name: str, context: dict) -> None:
+    room = context['room']
+    # ak sa tam neda ist, tak vypis
+    if room['exits']['west'] is None:
+        print('Tam sa nedá ísť.')
+        return
+
+    # najdi miestnost na zapad od tejto
+    room_name = room['exits']['west']
+    target_room = get_room_by_name(room_name, context['world'])
+
+    # aktualizujeme room
+    context['room'] = target_room
+
+    # vojdeme do nej (rozhliadneme sa v nej)
+    look_around(None, context)
+
+
+def east(name: str, context: dict) -> None:
+    room = context['room']
+    # ak sa tam neda ist, tak vypis
+    if room['exits']['east'] is None:
+        print('Tam sa nedá ísť.')
+        return
+
+    # najdi miestnost na zapad od tejto
+    room_name = room['exits']['east']
+    target_room = get_room_by_name(room_name, context['world'])
+
+    # aktualizujeme room
+    context['room'] = target_room
+
+    # vojdeme do nej (rozhliadneme sa v nej)
+    look_around(None, context)
+
+
+def north(name: str, context: dict) -> None:
+    room = context['room']
+    # ak sa tam neda ist, tak vypis
+    if room['exits']['north'] is None:
+        print('Tam sa nedá ísť.')
+        return
+
+    # najdi miestnost na zapad od tejto
+    room_name = room['exits']['north']
+    target_room = get_room_by_name(room_name, context['world'])
+
+    # aktualizujeme room
+    context['room'] = target_room
+
+    # vojdeme do nej (rozhliadneme sa v nej)
+    look_around(None, context)
+
+
+def south(name: str, context: dict) -> None:
+    room = context['room']
+    # ak sa tam neda ist, tak vypis
+    if room['exits']['south'] is None:
+        print('Tam sa nedá ísť.')
+        return
+
+    # najdi miestnost na zapad od tejto
+    room_name = room['exits']['south']
+    target_room = get_room_by_name(room_name, context['world'])
+
+    # aktualizujeme room
+    context['room'] = target_room
+
+    # vojdeme do nej (rozhliadneme sa v nej)
+    look_around(None, context)
+
+
 commands = [
     {
         'name': 'preskumaj',
@@ -234,5 +313,33 @@ commands = [
         'aliases': ('pouzit', 'use'),
         'description': 'použije zvolený predmet',
         'exec': use
-    }
+    },
+
+    {
+        'name': 'zapad',
+        'aliases': ('west', 'w', 'z'),
+        'description': 'prejde do miestnosti na zapad',
+        'exec': west
+    },
+
+    {
+        'name': 'vychod',
+        'aliases': ('east', 'e', 'v'),
+        'description': 'prejde do miestnosti na vychod',
+        'exec': east
+    },
+
+    {
+        'name': 'sever',
+        'aliases': ('north', 'n', 's'),
+        'description': 'prejde do miestnosti na sever',
+        'exec': north
+    },
+
+    {
+        'name': 'juh',
+        'aliases': ('south', 'j'),
+        'description': 'prejde do miestnosti na juh',
+        'exec': south
+    },
 ]
